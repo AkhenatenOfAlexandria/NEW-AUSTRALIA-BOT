@@ -1,14 +1,15 @@
 import traceback
 import sys
 import logging
-from BOT.BOT import BOT
+from BOT.BOT import NewAustraliaBot
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 def MAIN():
-    logging.info("MAIN() activated.")
-    BOT()
-    logging.info("MAIN() complete.")
+	logging.info("MAIN() activated.")
+	_BOT = NewAustraliaBot()
+	_BOT.run_bot()
+	logging.info("MAIN() complete.")
 
 if __name__ == "__main__":
 	try:

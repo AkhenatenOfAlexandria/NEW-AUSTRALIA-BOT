@@ -15,7 +15,7 @@ from UTILS.TOKEN import TOKEN
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-class MyBot(commands.Bot):
+class NewAustraliaBot(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix="$",
