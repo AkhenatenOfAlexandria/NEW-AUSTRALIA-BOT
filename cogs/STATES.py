@@ -11,7 +11,7 @@ class States(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
-        self.data_file = "states_data.json"
+        self.data_file = "UTILS/states_data.json"
         self.cooldown_data = self.load_cooldown_data()
         
         # Define your state roles here - UPDATE THESE TO MATCH YOUR SERVER ROLES

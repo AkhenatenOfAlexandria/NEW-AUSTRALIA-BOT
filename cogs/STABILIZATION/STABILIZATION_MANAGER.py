@@ -31,6 +31,43 @@ class StabilizationManager:
             logging.error(f"❌ Failed to initialize stabilization system: {e}")
             raise
     
+    def restart_system(self):
+        """Restart the stabilization system (useful after bot restarts)"""
+        try:
+            logging.info("🔄 Restarting stabilization system...")
+            
+            # Stop existing tasks
+            self.tasks.stop_tasks()
+            
+            # Reinitialize
+            self.initialize()
+            
+            logging.info("✅ Stabilization system restarted successfully")
+            
+        except Exception as e:
+            logging.error(f"❌ Failed to restart stabilization system: {e}")
+            raise
+    
+    def check_system_health(self):
+        """Check if the stabilization system is running properly"""
+        try:
+            stabilization_running = self.tasks.stabilization_loop.is_running() if hasattr(self.tasks, 'stabilization_loop') else False
+            recovery_running = self.tasks.recovery_loop.is_running() if hasattr(self.tasks, 'recovery_loop') else False
+            
+            status = {
+                'stabilization_loop': stabilization_running,
+                'recovery_loop': recovery_running,
+                'tasks_started': self.tasks._tasks_started,
+                'healthy': stabilization_running and recovery_running and self.tasks._tasks_started
+            }
+            
+            logging.info(f"Stabilization system health check: {status}")
+            return status
+            
+        except Exception as e:
+            logging.error(f"Error checking stabilization system health: {e}")
+            return {'healthy': False, 'error': str(e)}
+    
     def shutdown(self):
         """Shutdown all stabilization systems"""
         try:
@@ -57,7 +94,7 @@ class StabilizationManager:
         """Get stabilization status for a user"""
         return self.processor.get_stabilization_status(user_id)
     
-    # Command handlers
+    # Command handlers (keeping your existing methods)
     
     async def show_stabilization_status(self, interaction: discord.Interaction, target_user: Optional[discord.Member] = None):
         """Show stabilization status command"""
@@ -184,8 +221,8 @@ class StabilizationManager:
             elif new_health <= 0 and old_health <= 0:
                 # Already unconscious - add failure
                 result = self.add_stabilization_failure(user_id, 1)
-                if result == 'death':
-                    embed.add_field(name="Effect", value="💀 Death from Stabilization Failures!", inline=False)
+                if result == 'three_failures_restart':
+                    embed.add_field(name="Effect", value="💀 3 Failures! Lost 1 HP, Stabilization Restarted!", inline=False)
                 elif result == 'failure_added':
                     embed.add_field(name="Effect", value="💀 Added Stabilization Failure!", inline=False)
             
@@ -195,3 +232,70 @@ class StabilizationManager:
         except Exception as e:
             logging.error(f"Error in debug_damage: {e}")
             await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
+    
+    async def debug_system_health(self, interaction: discord.Interaction):
+        """Debug command to check system health"""
+        try:
+            health_status = self.check_system_health()
+            
+            embed = discord.Embed(
+                title="🔧 Stabilization System Health Check",
+                color=discord.Color.green() if health_status.get('healthy') else discord.Color.red(),
+                timestamp=discord.utils.utcnow()
+            )
+            
+            embed.add_field(
+                name="Stabilization Loop", 
+                value="✅ Running" if health_status.get('stabilization_loop') else "❌ Stopped", 
+                inline=True
+            )
+            embed.add_field(
+                name="Recovery Loop", 
+                value="✅ Running" if health_status.get('recovery_loop') else "❌ Stopped", 
+                inline=True
+            )
+            embed.add_field(
+                name="Tasks Started", 
+                value="✅ Yes" if health_status.get('tasks_started') else "❌ No", 
+                inline=True
+            )
+            embed.add_field(
+                name="Overall Health", 
+                value="✅ Healthy" if health_status.get('healthy') else "❌ Issues Detected", 
+                inline=False
+            )
+            
+            if not health_status.get('healthy'):
+                embed.add_field(
+                    name="Recommended Action",
+                    value="Use `/debug_restart_stabilization` to restart the system",
+                    inline=False
+                )
+            
+            embed.set_footer(text="Debug Command")
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            
+        except Exception as e:
+            logging.error(f"Error in debug_system_health: {e}")
+            await interaction.response.send_message(f"❌ Error checking system health: {e}", ephemeral=True)
+    
+    async def debug_restart_system(self, interaction: discord.Interaction):
+        """Debug command to restart the stabilization system"""
+        try:
+            await interaction.response.defer(ephemeral=True)
+            
+            self.restart_system()
+            
+            embed = discord.Embed(
+                title="🔄 Stabilization System Restarted",
+                description="Successfully restarted all stabilization components",
+                color=discord.Color.green(),
+                timestamp=discord.utils.utcnow()
+            )
+            embed.set_footer(text="Debug Command")
+            
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            
+        except Exception as e:
+            logging.error(f"Error in debug_restart_system: {e}")
+            await interaction.followup.send(f"❌ Error restarting system: {e}", ephemeral=True)

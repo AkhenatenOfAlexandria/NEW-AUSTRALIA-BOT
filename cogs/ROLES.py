@@ -10,7 +10,7 @@ GUILD = discord.Object(id=GUILD_ID)
 class RoleAssignment(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.config_file = "role_config.json"
+        self.config_file = "UTILS/role_config.json"
         self.load_config()
     
     def load_config(self):

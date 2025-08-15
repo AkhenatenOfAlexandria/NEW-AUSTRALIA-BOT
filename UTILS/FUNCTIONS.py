@@ -137,8 +137,10 @@ def BALANCE_UPDATED(TIME, USER, REASON, CASH=0, BANK=0, MESSAGE=None):
             url=MESSAGE.jump_url,
             icon_url=MESSAGE.author.avatar.url)
     elif REASON == "WITHDRAW":
+        # In UTILS/FUNCTIONS.py, line 141:
         EMBED.set_author(
-            name=f"{MESSAGE.author} used $withdraw in #{MESSAGE.channel}.",
+            # In UTILS/FUNCTIONS.py, line 141:
+            name=f"{USER} used withdraw command.",
             url=MESSAGE.jump_url,
             icon_url=MESSAGE.author.avatar.url)
     EMBED.add_field(name= "User:", value= USER, inline= False)

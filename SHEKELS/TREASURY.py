@@ -5,7 +5,7 @@ from decimal import Decimal
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 TREASURY_DATA = 'SHEKELS/TREASURY_DATA.JSON'
-USER_DATA = 'SHEKELS/USER_DATA.JSON'
+USER_DATA = 'UTILS/USER_DATA.JSON'
 
 def init_treasury():
     """Initialize treasury data file if it doesn't exist"""

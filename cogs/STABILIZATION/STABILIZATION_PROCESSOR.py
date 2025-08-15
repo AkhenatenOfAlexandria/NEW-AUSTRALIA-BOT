@@ -66,7 +66,7 @@ class StabilizationProcessor:
             return None
     
     def _process_roll_result(self, user_id: int, roll_result: Dict[str, Any], status: Dict[str, Any]) -> Dict[str, Any]:
-        """Process roll result and update stabilization status - FIXED to continue rolling"""
+        """Process roll result and update stabilization status - FIXED to restart on 3 failures"""
         try:
             current_successes = status.get('successes', 0)
             current_failures = status.get('failures', 0)
@@ -109,14 +109,35 @@ class StabilizationProcessor:
                 new_failures = current_failures + 1
                 
                 if new_failures >= 3:
-                    # Death! Clear stabilization status
-                    self.database.clear_stabilization(user_id)
-                    logging.warning(f"User {user_id} has died from stabilization failures")
-                    return {
-                        'result': 'death',
-                        'successes': current_successes,
-                        'failures': new_failures
-                    }
+                    # 3 failures! Lose 1 HP and restart stabilization
+                    health_lost = self.database.apply_health_change(user_id, -1)
+                    
+                    if health_lost is not None:
+                        # Reset stabilization counters and schedule next roll
+                        next_roll = datetime.now() + timedelta(seconds=6)
+                        success = self.database.update_stabilization_status(
+                            user_id,
+                            successes=0,  # Reset successes
+                            failures=0,   # Reset failures
+                            next_roll_time=next_roll
+                        )
+                        
+                        if success:
+                            logging.warning(f"User {user_id} lost 1 HP from 3 failures, restarting stabilization at {health_lost} HP")
+                        else:
+                            logging.error(f"Failed to reset stabilization status for user {user_id}")
+                        
+                        return {
+                            'result': 'three_failures_restart',
+                            'successes': 0,
+                            'failures': 0,
+                            'health_lost': 1,
+                            'new_health': health_lost
+                        }
+                    else:
+                        # Failed to apply health change
+                        logging.error(f"Failed to apply health change for user {user_id}")
+                        return {'result': 'error'}
                 else:
                     # Continue stabilizing - schedule next roll
                     next_roll = datetime.now() + timedelta(seconds=6)
@@ -141,7 +162,7 @@ class StabilizationProcessor:
         except Exception as e:
             logging.error(f"Error processing roll result for user {user_id}: {e}")
             return {'result': 'error'}
-    
+        
     def add_stabilization_failure(self, user_id: int, count: int = 1) -> str:
         """Add failures when user takes damage while stabilizing"""
         try:
@@ -156,10 +177,29 @@ class StabilizationProcessor:
             new_failures = current_failures + count
             
             if new_failures >= 3:
-                # Death from failures
-                self.database.clear_stabilization(user_id)
-                logging.warning(f"User {user_id} has died from stabilization failures")
-                return 'death'
+                # 3 failures! Lose 1 HP and restart stabilization
+                health_lost = self.database.apply_health_change(user_id, -1)
+                
+                if health_lost is not None:
+                    # Reset stabilization counters and schedule next roll
+                    next_roll = datetime.now() + timedelta(seconds=6)
+                    success = self.database.update_stabilization_status(
+                        user_id,
+                        successes=0,  # Reset successes
+                        failures=0,   # Reset failures
+                        next_roll_time=next_roll
+                    )
+                    
+                    if success:
+                        logging.warning(f"User {user_id} lost 1 HP from {new_failures} failures, restarting stabilization at {health_lost} HP")
+                    else:
+                        logging.error(f"Failed to reset stabilization status for user {user_id}")
+                    
+                    return 'three_failures_restart'
+                else:
+                    # Failed to apply health change
+                    logging.error(f"Failed to apply health change for user {user_id}")
+                    return 'error'
             else:
                 # Update failures and continue - schedule next roll
                 next_roll = datetime.now() + timedelta(seconds=6)

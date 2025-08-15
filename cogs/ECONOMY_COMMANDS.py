@@ -7,7 +7,7 @@ from discord.ext import commands
 from SHEKELS.BALANCE import BALANCE, ECONOMY, VIEW_PORTFIOLIO, LEADERBOARD, ADD_TAX_CREDITS
 from SHEKELS.TRANSFERS import WITHDRAW, DEPOSIT, PAY, UPDATE_BALANCE
 from SHEKELS.TREASURY import update_treasury_balance
-from FUNCTIONS import USER_FINDER, BALANCE_UPDATED
+from UTILS.FUNCTIONS import USER_FINDER, BALANCE_UPDATED
 from UTILS.CONFIGURATION import MONEY_LOG_ID
 
 GUILD_ID = 574731470900559872
@@ -49,8 +49,6 @@ class EconomyCommands(commands.Cog):
     @app_commands.guilds(GUILD)
     async def balance(self, interaction: discord.Interaction, user: discord.Member = None):
         # Allow checking others' balances even while unconscious, but not your own
-        if not user and not await self.check_consciousness(interaction):
-            return
         
         logging.info(f'Balance activated by {interaction.user} in #{interaction.channel}.')
         

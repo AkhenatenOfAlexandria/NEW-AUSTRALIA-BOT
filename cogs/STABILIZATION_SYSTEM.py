@@ -95,6 +95,43 @@ class StabilizationCog(commands.Cog):
         
         await self.manager.debug_damage(interaction, amount, user)
     
+    @app_commands.command(
+        name="debug_system_health", 
+        description="[DEBUG] Check stabilization system health"
+    )
+    @app_commands.guilds(GUILD)
+    async def debug_system_health(
+        self, 
+        interaction: discord.Interaction
+    ):
+        """Debug command to check system health"""
+        await self.manager.debug_system_health(interaction)
+    
+    @app_commands.command(
+        name="debug_restart_stabilization", 
+        description="[DEBUG] Restart the stabilization system"
+    )
+    @app_commands.guilds(GUILD)
+    async def debug_restart_stabilization(
+        self, 
+        interaction: discord.Interaction
+    ):
+        """Debug command to restart the stabilization system"""
+        await self.manager.debug_restart_system(interaction)
+    
+    # Bot event handlers
+    
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """Handle bot ready event - check if system needs restart"""
+        try:
+            health_status = self.manager.check_system_health()
+            if not health_status.get('healthy'):
+                logging.warning("Stabilization system unhealthy on bot ready, attempting restart...")
+                self.manager.restart_system()
+        except Exception as e:
+            logging.error(f"Error checking stabilization system on ready: {e}")
+    
     # Public API methods for other cogs to use
     
     def start_stabilization(self, user_id: int) -> bool:
@@ -112,6 +149,138 @@ class StabilizationCog(commands.Cog):
     def get_stabilization_status(self, user_id: int):
         """Get user's stabilization status"""
         return self.manager.get_stabilization_status(user_id)
+    
+    @app_commands.command(name="debug_stabilization_db", description="Debug stabilization database")
+    @app_commands.guilds(GUILD)
+    async def debug_stabilization_db(self, interaction: discord.Interaction):
+        """Debug database tables and schema"""
+        try:
+            import sqlite3
+            with sqlite3.connect('stats.db') as conn:
+                cursor = conn.cursor()
+                
+                # Get all tables
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = [row[0] for row in cursor.fetchall()]
+                
+                embed = discord.Embed(title="🗃️ Database Debug", color=discord.Color.blue())
+                embed.add_field(name="Tables", value="\n".join(tables) or "None", inline=False)
+                
+                # Check stabilization table
+                if 'stabilization' in tables:
+                    cursor.execute("SELECT COUNT(*) FROM stabilization")
+                    count = cursor.fetchone()[0]
+                    embed.add_field(name="Stabilization Records", value=str(count), inline=True)
+                
+                # Check for health tables
+                health_tables = [t for t in tables if 'health' in t.lower() or 'stats' in t.lower() or 'character' in t.lower()]
+                embed.add_field(name="Potential Health Tables", value="\n".join(health_tables) or "None found", inline=False)
+                
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Database debug failed: {e}", ephemeral=True)
+
+    @app_commands.command(name="debug_stabilization_tasks", description="Debug stabilization tasks")
+    @app_commands.guilds(GUILD)
+    async def debug_stabilization_tasks(self, interaction: discord.Interaction):
+        """Debug task status"""
+        try:
+            manager = self.manager
+            
+            embed = discord.Embed(title="⚡ Task Debug", color=discord.Color.orange())
+            
+            # Check if tasks object exists
+            if hasattr(manager, 'tasks'):
+                tasks = manager.tasks
+                embed.add_field(name="Tasks Object", value="✅ Exists", inline=True)
+                
+                # Check task attributes
+                has_stab_loop = hasattr(tasks, 'stabilization_loop')
+                has_rec_loop = hasattr(tasks, 'recovery_loop')
+                
+                embed.add_field(name="Stabilization Loop Attr", value="✅" if has_stab_loop else "❌", inline=True)
+                embed.add_field(name="Recovery Loop Attr", value="✅" if has_rec_loop else "❌", inline=True)
+                
+                if has_stab_loop:
+                    running = tasks.stabilization_loop.is_running() if hasattr(tasks.stabilization_loop, 'is_running') else False
+                    embed.add_field(name="Stabilization Running", value="✅" if running else "❌", inline=True)
+                
+                if has_rec_loop:
+                    running = tasks.recovery_loop.is_running() if hasattr(tasks.recovery_loop, 'is_running') else False
+                    embed.add_field(name="Recovery Running", value="✅" if running else "❌", inline=True)
+                    
+            else:
+                embed.add_field(name="Tasks Object", value="❌ Missing", inline=True)
+            
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Task debug failed: {e}", ephemeral=True)
+
+    # Add this to your StabilizationCog class in STABILIZATION_SYSTEM.py
+
+    @app_commands.command(
+        name="debug_stabilization_quick", 
+        description="Quick stabilization debug check"
+    )
+    @app_commands.guilds(GUILD)
+    async def debug_stabilization_quick(self, interaction: discord.Interaction):
+        """Quick debug to see what's broken"""
+        try:
+            embed = discord.Embed(title="🔍 Quick Debug Check", color=discord.Color.blue())
+            
+            # Check manager
+            embed.add_field(
+                name="Manager", 
+                value="✅ Exists" if hasattr(self, 'manager') else "❌ Missing", 
+                inline=True
+            )
+            
+            # Check processor
+            if hasattr(self, 'manager') and hasattr(self.manager, 'processor'):
+                embed.add_field(name="Processor", value="✅ Exists", inline=True)
+            else:
+                embed.add_field(name="Processor", value="❌ Missing", inline=True)
+            
+            # Check tasks
+            if hasattr(self, 'manager') and hasattr(self.manager, 'tasks'):
+                tasks = self.manager.tasks
+                embed.add_field(name="Tasks Object", value="✅ Exists", inline=True)
+                
+                # Check if tasks have the loop attributes
+                has_stab = hasattr(tasks, 'stabilization_loop')
+                has_rec = hasattr(tasks, 'recovery_loop')
+                
+                embed.add_field(name="Stabilization Loop", value="✅" if has_stab else "❌", inline=True)
+                embed.add_field(name="Recovery Loop", value="✅" if has_rec else "❌", inline=True)
+                
+                # Check if running
+                if has_stab:
+                    try:
+                        running = tasks.stabilization_loop.is_running()
+                        embed.add_field(name="Stab Loop Running", value="✅" if running else "❌", inline=True)
+                    except Exception as e:
+                        embed.add_field(name="Stab Loop Error", value=f"❌ {str(e)[:50]}", inline=True)
+                
+            else:
+                embed.add_field(name="Tasks Object", value="❌ Missing", inline=True)
+            
+            # Check database
+            try:
+                if hasattr(self, 'manager') and hasattr(self.manager, 'processor'):
+                    # Try a simple database operation
+                    test_status = self.manager.processor.database.get_stabilization_status(interaction.user.id)
+                    embed.add_field(name="Database", value="✅ Accessible", inline=True)
+                else:
+                    embed.add_field(name="Database", value="❌ No processor", inline=True)
+            except Exception as e:
+                embed.add_field(name="Database", value=f"❌ {str(e)[:50]}", inline=True)
+            
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Debug command failed: {e}", ephemeral=True)
 
 async def setup(bot):
     """Required function for Discord.py to load the cog"""

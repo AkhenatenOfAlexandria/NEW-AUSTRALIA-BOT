@@ -6,7 +6,7 @@ from decimal import Decimal
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
-USER_DATA = 'SHEKELS/USER_DATA.JSON'
+USER_DATA = 'UTILS/USER_DATA.JSON'
 TREASURY_DATA = 'SHEKELS/TREASURY_DATA.JSON'
 
 

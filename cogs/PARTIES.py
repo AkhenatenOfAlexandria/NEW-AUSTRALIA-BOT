@@ -34,7 +34,7 @@ def has_citizens_role():
 class PartiesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.data_file = "parties_data.json"
+        self.data_file = "UTILS/parties_data.json"
         self.parties = {}
         self.user_cooldowns = {}
         self.pending_parties = {}  # Store pending party creations

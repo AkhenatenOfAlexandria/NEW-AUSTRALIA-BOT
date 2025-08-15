@@ -17,7 +17,7 @@ class StabilizationLogger:
         self.health_log_id = HEALTH_LOG_ID
     
     def create_stabilization_embed(
-        self, 
+           self, 
         user: discord.User, 
         roll_result: Dict[str, Any], 
         process_result: Dict[str, Any], 
@@ -30,8 +30,8 @@ class StabilizationLogger:
         result_type = process_result.get('result', 'unknown')
         if result_type in ['stabilized']:
             color = discord.Color.green()
-        elif result_type in ['death']:
-            color = discord.Color.dark_red()
+        elif result_type in ['three_failures_restart']:
+            color = discord.Color.dark_orange()  # Orange for restart
         elif roll_result['success']:
             color = discord.Color.blue()
         else:
@@ -61,7 +61,7 @@ class StabilizationLogger:
             'success': f"✅ Success ({process_result.get('successes', 0)}/3)",
             'failure': f"❌ Failure ({process_result.get('failures', 0)}/3)",
             'stabilized': "🌟 **STABILIZED!**",
-            'death': "💀 **DEATH**"
+            'three_failures_restart': "⚠️ **3 FAILURES! Lost 1 HP, restarting...**"
         }
         
         embed.add_field(
@@ -93,6 +93,12 @@ class StabilizationLogger:
                 value=f"Successes: {process_result.get('successes', 0)}/3\nFailures: {process_result.get('failures', 0)}/3",
                 inline=True
             )
+        elif result_type == 'three_failures_restart':
+            embed.add_field(
+                name="Progress",
+                value="Reset to 0/3 successes, 0/3 failures\nStabilization continues...",
+                inline=True
+            )
         
         # Special effects
         if roll_result.get('special_effect'):
@@ -112,7 +118,7 @@ class StabilizationLogger:
                 value=effect_desc,
                 inline=False
             )
-        
+    
         embed.set_footer(text="Stabilization System")
         return embed
     
@@ -244,7 +250,14 @@ class StabilizationLogger:
     async def send_to_log_channel(self, embed: discord.Embed):
         """Send embed to health log channel with comprehensive fallback"""
         try:
-            # Try primary health log channel
+            logging.debug(f"Attempting to send to health log channel ID: {self.health_log_id}")
+            
+            # Validate channel ID
+            if not self.health_log_id or self.health_log_id == 123456789:
+                logging.error("Health log channel ID not properly configured!")
+                await self._fallback_logging(embed)
+                return False
+                
             health_log_channel = self.bot.get_channel(self.health_log_id)
             
             if health_log_channel:
@@ -254,14 +267,9 @@ class StabilizationLogger:
             else:
                 logging.warning(f"Health log channel (ID: {self.health_log_id}) not found")
                 
-        except discord.Forbidden:
-            logging.warning("No permission to send to health log channel")
-        except discord.HTTPException as e:
-            logging.error(f"HTTP error sending to health log channel: {e}")
         except Exception as e:
-            logging.error(f"Unexpected error sending to health log channel: {e}")
-        
-        # Fallback logging
+            logging.error(f"Error sending to health log channel: {e}")
+            
         await self._fallback_logging(embed)
         return False
     

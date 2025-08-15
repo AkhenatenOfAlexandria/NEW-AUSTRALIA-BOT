@@ -4,7 +4,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from SHEKELS.GAMES.STOCK_MARKET import VIEW_STOCKS, BUY_STOCK, SELL_STOCK
-from FUNCTIONS import BALANCE_UPDATED
+from UTILS.FUNCTIONS import BALANCE_UPDATED
 from UTILS.CONFIGURATION import MONEY_LOG_ID
 
 GUILD_ID = 574731470900559872

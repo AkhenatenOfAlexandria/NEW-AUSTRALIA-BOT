@@ -7,10 +7,10 @@ import decimal
 
 from SHEKELS.BALANCE import BALANCE, USE_TAX_CREDITS
 from SHEKELS.TREASURY import pay_treasury  # Import new treasury system
-from FUNCTIONS import CREDIT_SCORE
+from UTILS.FUNCTIONS import CREDIT_SCORE
 from decimal import Decimal
 
-USER_DATA = 'SHEKELS/USER_DATA.JSON'
+USER_DATA = 'UTILS/USER_DATA.JSON'
 
 
 def ADD_MONEY(USER, AMOUNT, TIME, TYPE="BANK"):

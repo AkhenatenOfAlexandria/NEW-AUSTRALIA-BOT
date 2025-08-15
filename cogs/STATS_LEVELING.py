@@ -12,7 +12,7 @@ GUILD = discord.Object(id=GUILD_ID)
 try:
     from SHEKELS.BALANCE import BALANCE
     from SHEKELS.TRANSFERS import UPDATE_BALANCE  # Use UPDATE_BALANCE instead of WITHDRAW
-    from FUNCTIONS import BALANCE_UPDATED
+    from UTILS.FUNCTIONS import BALANCE_UPDATED
     from UTILS.CONFIGURATION import MONEY_LOG_ID
     ECONOMY_AVAILABLE = True
 except ImportError:

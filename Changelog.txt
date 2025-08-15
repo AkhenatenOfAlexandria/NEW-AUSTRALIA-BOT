@@ -1,3 +1,11 @@
+Alpha 1.6.4:
+- Patched Stabilization.
+- Combat delay-based instead of turn-based.
+- Combat now pings attackee.
+- Patched Hospital.
+- Patched Healing.
+- Incredibly buggy.
+
 Alpha 1.6.3:
 - Patched error preventing Bot start-up
 

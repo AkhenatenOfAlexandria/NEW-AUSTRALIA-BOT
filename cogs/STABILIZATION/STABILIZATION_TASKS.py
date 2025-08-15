@@ -10,11 +10,57 @@ if TYPE_CHECKING:
 class StabilizationTasks:
     """Handles background tasks for stabilization system"""
     
-    def __init__(self, bot, processor: 'StabilizationProcessor', logger: 'StabilizationLogger'):
+    def __init__(self, bot, processor, logger):
         self.bot = bot
         self.processor = processor
         self.logger = logger
         self._tasks_started = False
+        
+        # Create the task loops as attributes
+        self.stabilization_loop = self._create_stabilization_loop()
+        self.recovery_loop = self._create_recovery_loop()
+
+    def _create_stabilization_loop(self):
+        @tasks.loop(seconds=6)
+        async def stabilization_loop():
+            # Move the existing stabilization_loop code here
+            try:
+                current_time = datetime.now()
+                pending_users = self.processor.database.get_pending_rolls(current_time)
+                
+                if pending_users:
+                    logging.debug(f"Found {len(pending_users)} users ready for stabilization rolls")
+                
+                for user_data in pending_users:
+                    try:
+                        await self._process_single_stabilization_roll(user_data)
+                    except Exception as e:
+                        logging.error(f"Error processing stabilization roll for user {user_data.get('user_id', 'unknown')}: {e}")
+            except Exception as e:
+                logging.error(f"Error in stabilization loop: {e}")
+        
+        return stabilization_loop
+
+    def _create_recovery_loop(self):
+        @tasks.loop(minutes=10)
+        async def recovery_loop():
+            # Move the existing recovery_loop code here
+            try:
+                current_time = datetime.now()
+                recovery_users = self.processor.database.get_ready_for_recovery(current_time)
+                
+                if recovery_users:
+                    logging.debug(f"Processing {len(recovery_users)} potential recoveries")
+                
+                for user_data in recovery_users:
+                    try:
+                        await self._process_single_recovery(user_data)
+                    except Exception as e:
+                        logging.error(f"Error processing recovery for user {user_data.get('user_id', 'unknown')}: {e}")
+            except Exception as e:
+                logging.error(f"Error in recovery loop: {e}")
+        
+        return recovery_loop
     
     def start_tasks(self):
         """Start all background tasks"""
@@ -45,6 +91,23 @@ class StabilizationTasks:
         except Exception as e:
             logging.error(f"Error stopping stabilization tasks: {e}")
     
+    def restart_tasks(self):
+        """Restart tasks - useful after bot restart"""
+        try:
+            logging.info("🔄 Restarting stabilization tasks...")
+            self.stop_tasks()
+            # Small delay to ensure clean shutdown
+            import asyncio
+            asyncio.create_task(self._delayed_start())
+        except Exception as e:
+            logging.error(f"Error restarting stabilization tasks: {e}")
+    
+    async def _delayed_start(self):
+        """Start tasks after a small delay"""
+        import asyncio
+        await asyncio.sleep(1)
+        self.start_tasks()
+    
     @tasks.loop(seconds=6)  # Check every 6 seconds for stabilization rolls
     async def stabilization_loop(self):
         """Process pending stabilization rolls"""
@@ -53,7 +116,7 @@ class StabilizationTasks:
             pending_users = self.processor.database.get_pending_rolls(current_time)
             
             if pending_users:
-                logging.debug(f"Processing {len(pending_users)} pending stabilization rolls")
+                logging.debug(f"Found {len(pending_users)} users ready for stabilization rolls")
             
             for user_data in pending_users:
                 try:
@@ -63,6 +126,13 @@ class StabilizationTasks:
                     
         except Exception as e:
             logging.error(f"Error in stabilization loop: {e}")
+            # Try to restart the loop if it fails
+            if not self.stabilization_loop.is_running():
+                logging.info("Attempting to restart stabilization loop...")
+                try:
+                    self.stabilization_loop.restart()
+                except:
+                    logging.error("Failed to restart stabilization loop")
     
     async def _process_single_stabilization_roll(self, user_data):
         """Process a single user's stabilization roll"""
@@ -112,6 +182,13 @@ class StabilizationTasks:
                     
         except Exception as e:
             logging.error(f"Error in recovery loop: {e}")
+            # Try to restart the loop if it fails
+            if not self.recovery_loop.is_running():
+                logging.info("Attempting to restart recovery loop...")
+                try:
+                    self.recovery_loop.restart()
+                except:
+                    logging.error("Failed to restart recovery loop")
     
     async def _process_single_recovery(self, user_data):
         """Process a single user's natural recovery"""
@@ -145,3 +222,19 @@ class StabilizationTasks:
         """Wait for bot to be ready before starting recovery loop"""
         await self.bot.wait_until_ready()
         logging.info("🏥 Recovery loop starting...")
+    
+    @stabilization_loop.error
+    async def stabilization_loop_error(self, exception):
+        """Handle errors in stabilization loop"""
+        logging.error(f"Stabilization loop error: {exception}")
+        # Optionally restart the loop
+        # await asyncio.sleep(5)
+        # self.stabilization_loop.restart()
+    
+    @recovery_loop.error
+    async def recovery_loop_error(self, exception):
+        """Handle errors in recovery loop"""
+        logging.error(f"Recovery loop error: {exception}")
+        # Optionally restart the loop
+        # await asyncio.sleep(5)
+        # self.recovery_loop.restart()

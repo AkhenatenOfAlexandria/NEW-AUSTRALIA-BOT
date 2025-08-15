@@ -13,7 +13,7 @@ class RoleRestore(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.roles_file = "user_roles.json"
-        self.enabled_file = "role_restore_enabled.json"
+        self.enabled_file = "UTILS/role_restore_enabled.json"
         self.load_data()
 
     def load_data(self):

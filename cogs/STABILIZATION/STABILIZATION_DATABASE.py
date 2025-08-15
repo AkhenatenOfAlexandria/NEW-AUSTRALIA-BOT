@@ -229,31 +229,48 @@ class StabilizationDatabase:
             return []
     
     def get_user_health(self, user_id: int) -> Optional[Dict[str, int]]:
-        """Get user's current and max health - FIXED to use user_stats table"""
+        """Get user's current and max health"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 
-                # Modified query to use user_stats table and calculate max health
-                cursor.execute('''
-                    SELECT health as current_health, 
-                           constitution, level,
-                           (8 + (constitution - 10) / 2 + (level - 1) * (5 + (constitution - 10) / 2)) as max_health
-                    FROM user_stats 
-                    WHERE user_id = ?
-                ''', (user_id,))
+                # Check what tables exist first
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+                tables = [row[0] for row in cursor.fetchall()]
+                logging.debug(f"Available tables: {tables}")
                 
-                row = cursor.fetchone()
-                if row:
-                    result = dict(row)
-                    # Ensure max_health is at least equal to level (D&D rule)
-                    result['max_health'] = max(result['max_health'], result.get('level', 1))
-                    return {
-                        'current_health': result['current_health'],
-                        'max_health': int(result['max_health'])
-                    }
+                # Try different possible table names/schemas
+                possible_queries = [
+                    # Option 1: user_stats table
+                    "SELECT health as current_health, constitution, level FROM user_stats WHERE user_id = ?",
+                    # Option 2: characters table  
+                    "SELECT health as current_health, constitution, level FROM characters WHERE user_id = ?",
+                    # Option 3: Simple health table
+                    "SELECT health as current_health, 10 as constitution, 1 as level FROM user_health WHERE user_id = ?"
+                ]
                 
+                for query in possible_queries:
+                    try:
+                        cursor.execute(query, (user_id,))
+                        row = cursor.fetchone()
+                        if row:
+                            result = dict(row)
+                            # Calculate max health (D&D 5e style)
+                            constitution = result.get('constitution', 10)
+                            level = result.get('level', 1)
+                            con_modifier = (constitution - 10) // 2
+                            max_health = max(level, 8 + con_modifier + (level - 1) * (5 + con_modifier))
+                            
+                            return {
+                                'current_health': result['current_health'],
+                                'max_health': max_health
+                            }
+                    except sqlite3.OperationalError as e:
+                        logging.debug(f"Query failed: {query} - {e}")
+                        continue
+                
+                logging.warning(f"No health data found for user {user_id} in any table")
                 return None
                 
         except Exception as e:

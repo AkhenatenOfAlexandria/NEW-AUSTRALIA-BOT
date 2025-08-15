@@ -4,7 +4,7 @@ import traceback
 from discord.ext import tasks
 from datetime import datetime
 
-from FUNCTIONS import CALCULATE_DELAY
+from UTILS.FUNCTIONS import CALCULATE_DELAY
 from SHEKELS.TAX import WEALTH_TAX
 from SHEKELS.GAMES.STOCK_MARKET import STOCK_CHANGE
 

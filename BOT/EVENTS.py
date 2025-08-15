@@ -1,7 +1,7 @@
 import logging
 from discord.ext import commands
 from SHEKELS.INCOME import INCOME
-from FUNCTIONS import BALANCE_UPDATED
+from UTILS.FUNCTIONS import BALANCE_UPDATED
 
 class EventHandler:
     def __init__(self, bot):

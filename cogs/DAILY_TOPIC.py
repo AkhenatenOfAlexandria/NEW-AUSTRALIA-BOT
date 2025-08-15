@@ -19,7 +19,7 @@ class DailyTopics(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
-        self.data_file = "daily_topics_data.json"
+        self.data_file = "UTILS/daily_topics_data.json"
         self.data = self.load_data()
         
         # Default topics if none exist

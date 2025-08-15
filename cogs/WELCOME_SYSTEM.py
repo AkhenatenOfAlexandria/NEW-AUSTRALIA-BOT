@@ -70,7 +70,7 @@ class WelcomeSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config_file = "welcome_config.json"
-        self.pending_file = "pending_users.json"
+        self.pending_file = "UTILS/pending_users.json"
         self.load_config()
         self.load_pending_users()
 
