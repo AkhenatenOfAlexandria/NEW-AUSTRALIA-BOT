@@ -1,0 +1,69 @@
+Alpha 1.6.3:
+
+
+Alpha 1.6.2:
+- Stabilization is still the Devil.
+
+Alpha 1.6.1:
+- Patched Hospital Logging.
+- Restructured Bot files.
+- Stabilization is the Devil.
+
+Alpha 1.6.0:
+- Added Hospital.
+- Replaced Robbing with Looting.
+- Added Stabilization sytem.
+- Action commands now locked to Unconscious players.
+
+Alpha 1.5.2:
+- Combat more polished.
+- Healing now costs Shekels.
+- Can now attack the Unconscious.
+- Donations to the Church now tax-deductible.
+- Replaced Kangaroo Fund with direct payments to His Hoppiness
+
+Alpha 1.5.1:
+- Patch: Level-up now costs money instead of gaining money.
+- Treasuries now managed by Bot instead of attached to alt accounts.
+
+Alpha 1.5.0:
+- Added Stats
+- Added combat
+
+Alpha 1.4.1
+- Added Debug Mode.
+- Slash Commands should now sync properly.
+
+Alpha 1.4.0
+- Added Role Restore Cog.
+- Patched live message logging.
+- Added Avatar and Warn commands.
+- Added Welcome System.
+- Refactored Role and Party commands as sub-commands.
+- Refactored Music commands.
+- Added Daily Topic.
+- Added Balance information to User Info.
+
+Alpha 1.3.0
+- Added Administration Cog.
+- Added Slash Commands.
+- Added Roles Cog.
+- Added States Cog.
+- Maximum Stock Market change is now 5%.
+
+Alpha 1.2.0
+- Added Log Messages command
+
+Alpha 1.1.1
+- Added Cogs
+- Music commands broken
+
+Alpha 1.1.0
+- Added music commands
+- Extremely buggy
+
+Alpha 1.0.0
+- Users are paid shekels for messages.
+- Wealth-tax and Stock-updates should automatically fire.
+- Ask, Balance, Deposit, Echo, Economy, Leaderboard, Pay, Ping, Rob, Withdraw, Money, Role Money, and Wealth Tax commands functional.
+- Bible, Buy Stock, Portfolio, Sell Stock, and Stock Change commands available.

@@ -5,8 +5,8 @@ import math
 import datetime
 import decimal
 
-from SHEKELS.BALANCE import BALANCE
-from SHEKELS.TAX import PAY_TREASURY
+from SHEKELS.BALANCE import BALANCE, USE_TAX_CREDITS
+from SHEKELS.TREASURY import pay_treasury  # Import new treasury system
 from FUNCTIONS import CREDIT_SCORE
 from decimal import Decimal
 
@@ -104,91 +104,51 @@ def PAY(AGENT, PATIENT, AMOUNT):
     with open(USER_DATA, 'r') as file:
         DATA = json.load(file)
     
+    # Calculate initial tax amount
+    initial_tax = 0
     if DATA is not None and DATA[PATIENT_ID]["TAX"] and AMOUNT >= 100:
-        TAX = int(math.floor(AMOUNT/100)*10)
-    else:
-        TAX = 0
+        initial_tax = int(math.floor(AMOUNT/100)*10)
+    
+    # Use tax credits to reduce the tax
+    credits_used = 0
+    actual_tax = initial_tax
+    if initial_tax > 0:
+        credits_used, actual_tax = USE_TAX_CREDITS(PATIENT, initial_tax)
 
     AGENT_CASH = Decimal(DATA[AGENT_ID]["CASH"])
     PATIENT_CASH = Decimal(DATA[PATIENT_ID]["CASH"])
     AGENT_CASH -= AMOUNT
-    PATIENT_CASH += AMOUNT-TAX
+    PATIENT_CASH += AMOUNT - actual_tax  # Only deduct the actual tax after credits
     DATA[AGENT_ID]["CASH"] = str(AGENT_CASH)
     DATA[PATIENT_ID]["CASH"] = str(PATIENT_CASH)
+    
+    # Save user data first
+    if DATA is not None:
+        with open(USER_DATA, 'w') as file:
+            json.dump(DATA, file, indent=4)
+    else:
+        raise Exception("NO DATA TO DUMP")
+    
     HALF = 0
     TITHE = 0
-    if TAX:
-        DATA, _STRING, HALF, TITHE = PAY_TREASURY(TAX, DATA)[0:4]
-    
-    if DATA is not None:
-        with open(USER_DATA, 'w') as file:
-            json.dump(DATA, file, indent=4)
-    else:
-        raise Exception("NO DATA TO DUMP")
+    if actual_tax > 0:
+        # Use new treasury system
+        treasury_result = pay_treasury(actual_tax)
+        if treasury_result:
+            HALF = treasury_result[1]  # Amount to treasury
+            TITHE = treasury_result[2]  # Amount to church/kangaroo
 
-    STRING = f"{AGENT} paid ₪{AMOUNT} to {PATIENT}, who paid ₪{TAX} in taxes."
-    logging.info(STRING)
-    return STRING, TAX, HALF, TITHE
-
-
-def ROB(ROBBER, VICTIM, AMOUNT):
-    ROBBER_ID = str(ROBBER.id)
-    VICTIM_ID = str(VICTIM.id)
-    ROBBER_BALANCE = BALANCE(ROBBER)
-    VICTIM_BALANCE = BALANCE(VICTIM)
-    if VICTIM_BALANCE[0] <= 0:
-        logging.error(f"{ROBBER} attempted to rob {VICTIM} of ₪{AMOUNT}, but he only has ₪{VICTIM_BALANCE[0]}.")
-        raise ValueError("Victim has no Cash to rob.")
-    if AMOUNT <= 0 or AMOUNT > VICTIM_BALANCE[0]:
-        logging.error(f"{ROBBER} attempted to rob {VICTIM} of ₪{AMOUNT}. He has ₪{VICTIM_BALANCE[0]}.")
-        raise ValueError(f"Victim's balance of ₪{VICTIM_BALANCE[0]} is less than ₪{AMOUNT}.")
-    if not VICTIM_BALANCE[2]:
-        VICTIM_BALANCE[2] = 1
-    if not ROBBER_BALANCE[2]:
-        ROBBER_BALANCE[2] = 1
-    CHANCE = 1-(AMOUNT/VICTIM_BALANCE[0])
-    if ROBBER_BALANCE[2] < VICTIM_BALANCE[2]:
-        RATIO = (2-(ROBBER_BALANCE[2]/VICTIM_BALANCE[2]))/2
-    else:
-        RATIO = (VICTIM_BALANCE[2]/ROBBER_BALANCE[2])/2
-    
-    CHANCE = CHANCE*RATIO
-    
-    with open(USER_DATA, 'r') as file:
-        DATA = json.load(file)
-
-    VICTIM_CASH = Decimal(DATA[VICTIM_ID]["CASH"])
-    ROBBER_CASH = Decimal(DATA[ROBBER_ID]["CASH"])
-    if CHANCE > random.random():
-        if AMOUNT >= 100:
-            TAX = int(math.floor(AMOUNT/100)*10)
+    # Create message showing tax credit usage
+    if credits_used > 0:
+        if actual_tax > 0:
+            STRING = f"{AGENT} paid ₪{AMOUNT} to {PATIENT}. Tax: ₪{initial_tax} (₪{credits_used} covered by credits, ₪{actual_tax} paid)."
         else:
-            TAX = 0
-
-        VICTIM_CASH -= AMOUNT
-        ROBBER_CASH += AMOUNT-TAX
-        DATA[VICTIM_ID]["CASH"] = str(VICTIM_CASH)
-        DATA[ROBBER_ID]["CASH"] = str(ROBBER_CASH)
-        DATA = PAY_TREASURY(TAX, DATA)[0]
-        RETURN = f"{ROBBER} robbed {VICTIM} of ₪{AMOUNT} and paid ₪{TAX} in taxes.", True, AMOUNT, TAX
+            STRING = f"{AGENT} paid ₪{AMOUNT} to {PATIENT}. Tax: ₪{initial_tax} (fully covered by credits)."
     else:
-        FINE = int((1-CHANCE)*AMOUNT*2)
-        ROBBER_CASH -= FINE
-        RESTITUTION = int(math.floor(FINE/2))
-        VICTIM_CASH += RESTITUTION
-        DATA[VICTIM_ID]["CASH"] = str(VICTIM_CASH)
-        DATA[ROBBER_ID]["CASH"] = str(ROBBER_CASH)
-        DATA = PAY_TREASURY(int(math.ceil(FINE/2)), DATA)[0]
-        RETURN = f"{ROBBER} tried to rob {VICTIM} and was fined ₪{FINE}.", False, FINE, RESTITUTION
+        STRING = f"{AGENT} paid ₪{AMOUNT} to {PATIENT}, who paid ₪{actual_tax} in taxes."
     
-    if DATA is not None:
-        with open(USER_DATA, 'w') as file:
-            json.dump(DATA, file, indent=4)
-    else:
-        raise Exception("NO DATA TO DUMP")
-    
-    logging.debug("ROB() complete.")
-    return RETURN
+    logging.info(STRING)
+    return STRING, actual_tax, HALF, TITHE, credits_used
 
 
 def UPDATE_BALANCE(USER, AMOUNT, TYPE):
@@ -250,4 +210,3 @@ def WITHDRAW(USER, AMOUNT, TIME):
     else:
         logging.error("Invalid amount.")
         raise ValueError("Invalid amount.")
-    

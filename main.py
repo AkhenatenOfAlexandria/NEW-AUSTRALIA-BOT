@@ -1,7 +1,7 @@
 import traceback
 import sys
 import logging
-from BOT import BOT
+from BOT.BOT import BOT
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 

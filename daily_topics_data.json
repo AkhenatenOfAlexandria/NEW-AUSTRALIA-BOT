@@ -1,0 +1,42 @@
+{
+  "574731470900559872": {
+    "enabled": true,
+    "channel_id": 574731470900559874,
+    "role_id": 836854109088907285,
+    "post_time": "18:00",
+    "topics": [
+      "What's your favorite childhood memory?",
+      "If you could have dinner with anyone, dead or alive, who would it be?",
+      "What's the most interesting place you've ever visited?",
+      "What skill would you most like to learn and why?",
+      "What's your biggest goal for this year?",
+      "If you could live in any time period, when would it be?",
+      "What's the best advice you've ever received?",
+      "What's your go-to comfort food?",
+      "If you could instantly become an expert in something, what would it be?",
+      "What's something you've learned recently that surprised you?",
+      "What's your favorite way to spend a weekend?",
+      "If you could change one thing about the world, what would it be?",
+      "What's the most challenging thing you've ever done?",
+      "What's your favorite book/movie and why?",
+      "If you could have any superpower, what would it be?",
+      "What's something you're grateful for today?",
+      "What's the best gift you've ever given or received?",
+      "If you could speak any language fluently, which would you choose?",
+      "What's your ideal way to relax after a stressful day?",
+      "What's something new you'd like to try this month?"
+    ],
+    "used_topics": [
+      "What's your biggest goal for this year?",
+      "What's something new you'd like to try this month?",
+      "What's the most challenging thing you've ever done?",
+      "If you could speak any language fluently, which would you choose?",
+      "If you could have any superpower, what would it be?",
+      "If you could instantly become an expert in something, what would it be?",
+      "What's something you've learned recently that surprised you?"
+    ],
+    "pending_suggestions": [],
+    "last_posted": "2025-08-10",
+    "timezone": "UTC"
+  }
+}

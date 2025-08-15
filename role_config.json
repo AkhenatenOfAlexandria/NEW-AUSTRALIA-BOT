@@ -1,0 +1,33 @@
+{
+    "assignable_roles": {
+        "574731470900559872": {
+            "Announcements": {
+                "role_id": 940400406469681152,
+                "description": "Add this role to get pinged for announcements."
+            },
+            "Daily Topic": {
+                "role_id": 836854109088907285,
+                "description": "Add this role to get pinged for the Daily Topic."
+            },
+            "Diplomacy": {
+                "role_id": 1116598877202694204,
+                "description": "Add this role if you are interested in playing the game Diplomacy."
+            },
+            "Minecraft": {
+                "role_id": 968927675659984896,
+                "description": "Add this role to get pinged for updates on the *Minecraft* server."
+            },
+            "Movie Night": {
+                "role_id": 855140045220347924,
+                "description": "Add this role to get pinged for Movie Night."
+            },
+            "Voice Chat": {
+                "role_id": 932064933867311144,
+                "description": "Add this role to get pinged for voice chats."
+            }
+        }
+    },
+    "mutual_exclusions": {
+        "574731470900559872": {}
+    }
+}

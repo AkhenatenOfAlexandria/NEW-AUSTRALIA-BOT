@@ -1,7 +1,7 @@
 {
     "290699670211002368": {
-        "CASH": "421",
-        "BANK": "28256",
+        "CASH": "36",
+        "BANK": "-72342",
         "CREDIT": "1000",
         "TAX": true,
         "NAME": "akhenatenofalexandria9893",
@@ -69,39 +69,38 @@
                 "PROPORTION": "208.8245750099566101410694447",
                 "DUE": "2024-09-06 20:06:22.865000+00:00",
                 "REPAID": "2024-08-30 20:06:29.626000+00:00"
+            },
+            {
+                "BORROWED": "2025-08-10 07:13:54.915000+00:00",
+                "AMOUNT": "32963",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "0.003357817226275706712395105775",
+                "DUE": "2025-08-17 07:13:54.915000+00:00",
+                "REPAID": "2025-08-10 07:48:43.034000+00:00"
+            },
+            {
+                "BORROWED": "2025-08-10 19:07:52.650000+00:00",
+                "AMOUNT": "82784",
+                "AMOUNT DUE": "72342",
+                "PROPORTION": "4.719726339794754846066134550",
+                "DUE": "2025-08-17 19:07:52.650000+00:00",
+                "REPAID": null
             }
         ],
         "PORTFOLIO": {
-            "GOMYW": 2,
+            "GOMYW": 1,
             "RCZES": 1,
             "HNU": 2,
             "UCF": 1
-        }
+        },
+        "TAX_CREDITS": "22635779"
     },
     "854841975739514900": {
-        "CASH": "142",
-        "BANK": "9",
+        "CASH": "0",
+        "BANK": "0",
         "CREDIT": 1,
-        "TAX": true,
+        "TAX": false,
         "NAME": "waffledavey",
-        "LOANS": [],
-        "PORTFOLIO": {}
-    },
-    "292226625742045186": {
-        "CASH": "0",
-        "BANK": "27878",
-        "CREDIT": 1,
-        "TAX": false,
-        "NAME": "shekelcopter",
-        "LOANS": [],
-        "PORTFOLIO": {}
-    },
-    "802814593930887208": {
-        "CASH": "0",
-        "BANK": "5579",
-        "CREDIT": 1,
-        "TAX": false,
-        "NAME": "nefertitiofalexandria",
         "LOANS": [],
         "PORTFOLIO": {}
     },
@@ -124,7 +123,7 @@
         "PORTFOLIO": {}
     },
     "848309867072323594": {
-        "CASH": "12",
+        "CASH": "27",
         "BANK": "0",
         "CREDIT": 1,
         "TAX": true,
@@ -133,16 +132,49 @@
         "PORTFOLIO": {}
     },
     "854577416302886953": {
-        "CASH": "0",
-        "BANK": "30",
-        "CREDIT": 1,
+        "CASH": "63",
+        "BANK": "-36621",
+        "CREDIT": "5.194617878132117883067519857",
         "TAX": true,
-        "NAME": "gildedlilies",
-        "LOANS": [],
+        "NAME": "lvrsasia",
+        "LOANS": [
+            {
+                "BORROWED": "2025-08-09 05:03:00.553000+00:00",
+                "AMOUNT": "270",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "0.6601466992665036674816625917",
+                "DUE": "2025-08-16 05:03:00.553000+00:00",
+                "REPAID": "2025-08-09 05:04:37.204000+00:00"
+            },
+            {
+                "BORROWED": "2025-08-09 05:06:35.202000+00:00",
+                "AMOUNT": "491",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "0.1000203707476064371562436341",
+                "DUE": "2025-08-16 05:06:35.202000+00:00",
+                "REPAID": "2025-08-09 05:07:45.532000+00:00"
+            },
+            {
+                "BORROWED": "2025-08-09 05:06:56.671000+00:00",
+                "AMOUNT": "1100",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "0.2240782236708087186799755551",
+                "DUE": "2025-08-16 05:06:56.671000+00:00",
+                "REPAID": "2025-08-09 05:07:45.532000+00:00"
+            },
+            {
+                "BORROWED": "2025-08-09 05:06:59.837000+00:00",
+                "AMOUNT": "6500",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "1.324098594418415155836219189",
+                "DUE": "2025-08-16 05:06:59.837000+00:00",
+                "REPAID": "2025-08-09 05:07:45.532000+00:00"
+            }
+        ],
         "PORTFOLIO": {}
     },
     "760234994789646457": {
-        "CASH": "0",
+        "CASH": "48",
         "BANK": "-9099",
         "CREDIT": 1,
         "TAX": true,
@@ -162,7 +194,7 @@
         }
     },
     "504008510074257423": {
-        "CASH": "0",
+        "CASH": "245",
         "BANK": "39",
         "CREDIT": 1,
         "TAX": true,
@@ -243,7 +275,7 @@
         "PORTFOLIO": {}
     },
     "341008924956164107": {
-        "CASH": "0",
+        "CASH": "34",
         "BANK": "30",
         "CREDIT": 1,
         "TAX": true,
@@ -252,7 +284,7 @@
         "PORTFOLIO": {}
     },
     "721451482452328558": {
-        "CASH": "0",
+        "CASH": "189",
         "BANK": "30",
         "CREDIT": 1,
         "TAX": true,
@@ -261,7 +293,7 @@
         "PORTFOLIO": {}
     },
     "274959978899570688": {
-        "CASH": "0",
+        "CASH": "62",
         "BANK": "30",
         "CREDIT": 1,
         "TAX": true,
@@ -288,8 +320,8 @@
         "PORTFOLIO": {}
     },
     "483727844833361930": {
-        "CASH": "13",
-        "BANK": "30",
+        "CASH": "9032",
+        "BANK": "-100",
         "CREDIT": 1,
         "TAX": true,
         "NAME": "caffeinesnake",
@@ -342,7 +374,7 @@
         "PORTFOLIO": {}
     },
     "220312324014211073": {
-        "CASH": "0",
+        "CASH": "34",
         "BANK": "30",
         "CREDIT": 1,
         "TAX": true,
@@ -369,7 +401,7 @@
         "PORTFOLIO": {}
     },
     "573620364811436045": {
-        "CASH": "16",
+        "CASH": "84",
         "BANK": "30",
         "CREDIT": 1,
         "TAX": true,
@@ -396,8 +428,8 @@
         "PORTFOLIO": {}
     },
     "496417555049611275": {
-        "CASH": "15",
-        "BANK": "39",
+        "CASH": "222",
+        "BANK": "-501",
         "CREDIT": 1,
         "TAX": true,
         "NAME": "doctorclownface",
@@ -500,6 +532,243 @@
         "CREDIT": "1",
         "TAX": true,
         "NAME": "UnbelievaBoat#1046",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1294438919538085960": {
+        "CASH": "2646",
+        "BANK": "-970",
+        "CREDIT": "1",
+        "TAX": false,
+        "NAME": "pretzeldavey",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "786195145816014848": {
+        "CASH": "18",
+        "BANK": "-420",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "theradical2ude",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1194839599248322732": {
+        "CASH": "978",
+        "BANK": "-860",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "addie.the.cellist",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "451751491556999170": {
+        "CASH": "43",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "grabbers",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1356112440697290934": {
+        "CASH": "22",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "toosoons12",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "542384847121940491": {
+        "CASH": "22",
+        "BANK": "-300",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "lordjammbo",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "289180488676147202": {
+        "CASH": "8",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "tue4",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1321324111250718764": {
+        "CASH": "5000",
+        "BANK": "-7870",
+        "CREDIT": "1.999970783730158685465028157",
+        "TAX": true,
+        "NAME": "fouqas",
+        "LOANS": [
+            {
+                "BORROWED": "2025-08-09 05:56:42.297000+00:00",
+                "AMOUNT": "5",
+                "AMOUNT DUE": "0",
+                "PROPORTION": "1",
+                "DUE": "2025-08-16 05:56:42.297000+00:00",
+                "REPAID": "2025-08-09 05:56:59.967000+00:00"
+            }
+        ],
+        "PORTFOLIO": {}
+    },
+    "1373823122112774217": {
+        "CASH": "0",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "chen_10814",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1067959693110149221": {
+        "CASH": "16",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "somethinglikepreo",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "213722011896119296": {
+        "CASH": "3",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": false,
+        "NAME": "lordalabast",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "355467876653596672": {
+        "CASH": "91",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "astrifer",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1323071687503249428": {
+        "CASH": "46",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "concernedcitizen_na_09844",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "899006349227229254": {
+        "CASH": "0",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "its_acey0988",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "698810622690983967": {
+        "CASH": "4",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "xrf4",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "540708750068154381": {
+        "CASH": "3336",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "benji_aka_soup_sensei",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1312502887049330688": {
+        "CASH": "71",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "vscmeryemova",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1315400336470446112": {
+        "CASH": "7",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "dj.706",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "296045264433709057": {
+        "CASH": "16",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "dootski",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "723985955136208938": {
+        "CASH": "2",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "bluelink45",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1043201723860262942": {
+        "CASH": "7",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": "brownieeater14",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "373166599110131713": {
+        "CASH": "10",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX": true,
+        "NAME": ".tooski",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1133844595457933383": {
+        "CASH": "0",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX_CREDITS": "0",
+        "TAX": true,
+        "NAME": "charlestonwilliam",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1186096446844448808": {
+        "CASH": "0",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX_CREDITS": "0",
+        "TAX": true,
+        "NAME": "frizmbie",
+        "LOANS": [],
+        "PORTFOLIO": {}
+    },
+    "1075961024232038410": {
+        "CASH": "0",
+        "BANK": "0",
+        "CREDIT": "1",
+        "TAX_CREDITS": "0",
+        "TAX": true,
+        "NAME": "yanotothethird",
         "LOANS": [],
         "PORTFOLIO": {}
     }

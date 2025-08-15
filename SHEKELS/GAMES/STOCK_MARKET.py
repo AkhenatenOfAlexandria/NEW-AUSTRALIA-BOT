@@ -111,8 +111,8 @@ def STOCK_CHANGE():
     FLUX = math.sin(JULIAN_TIME)/4
     for STOCK, PRICE in STOCKS.items():
         CHANGE = (random.random()-0.5)/2+FLUX
-        CHANGE *= 2*PRICE
-        STOCKS[STOCK] = max(int(PRICE+CHANGE), 10)
+        CHANGE *= 0.1*PRICE
+        STOCKS[STOCK] = max(int(PRICE+CHANGE), 100)
     STOCKS = dict(sorted(STOCKS.items(), key=lambda item: item[1], reverse=True))
     
     with open(STOCK_FILE, 'w') as file:

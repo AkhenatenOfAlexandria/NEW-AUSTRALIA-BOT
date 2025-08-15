@@ -56,22 +56,37 @@ def CREDIT_SCORE(DUE, PAID, AMOUNT):
         dCREDIT = AMOUNT*Decimal(WEEK/LATE)-1
     return min(dCREDIT, 10)
 
+def CALCULATE_DELAY(interval: str) -> float:
+    now = datetime.datetime.now()
 
-def CALCULATE_DELAY(INTERVAL):
-    CURRENT_TIME = datetime.datetime.now()
-    if INTERVAL == "HOURLY":
-        DELTA = datetime.timedelta(hours=1)
-        DESIRED_TIME = CURRENT_TIME.replace(minute=0, second=0, microsecond=0)
-    elif INTERVAL == "WEEKLY":
-        SATURDAY = 5
-        TODAY = datetime.datetime.today()
-        DELTA = datetime.timedelta(weeks=1)
-        NEXT = ((SATURDAY - TODAY.weekday()) % 7)
-        DESIRED_TIME = (CURRENT_TIME).replace(day=CURRENT_TIME.day+NEXT, hour=0, minute=0, second=0, microsecond=0)
-    if CURRENT_TIME > DESIRED_TIME:
-        DESIRED_TIME += DELTA
-    DELAY = (DESIRED_TIME - CURRENT_TIME).total_seconds()
-    return DELAY
+    if interval == "HOURLY":
+        delta = datetime.timedelta(hours=1)
+        desired = now.replace(minute=0, second=0, microsecond=0)
+
+    elif interval == "MINUTELY":
+        delta = datetime.timedelta(minutes=1)
+        desired = now.replace(second=0, microsecond=0)
+
+    elif interval == "EVERY_5_MINUTES":
+        delta = datetime.timedelta(minutes=5)
+        # Align to current 5-min block (00,05,10,...,55)
+        base_minute = (now.minute // 5) * 5
+        desired = now.replace(minute=base_minute, second=0, microsecond=0)
+
+    elif interval == "WEEKLY":
+        # Next Saturday 00:00 local time
+        delta = datetime.timedelta(weeks=1)
+        days_until_sat = (5 - now.weekday()) % 7  # Monday=0 ... Sunday=6
+        desired_date = (now + datetime.timedelta(days=days_until_sat)).date()
+        desired = datetime.datetime.combine(desired_date, datetime.time(0, 0))
+
+    else:
+        raise ValueError(f"Unknown interval: {interval}")
+
+    if now >= desired:
+        desired += delta
+
+    return (desired - now).total_seconds()
 
 
 def BALANCE_UPDATED(TIME, USER, REASON, CASH=0, BANK=0, MESSAGE=None):
