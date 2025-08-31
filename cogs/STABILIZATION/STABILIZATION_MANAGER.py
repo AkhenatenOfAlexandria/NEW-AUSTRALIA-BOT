@@ -19,7 +19,10 @@ class StabilizationManager:
     def initialize(self):
         """Initialize all stabilization systems"""
         try:
-            # Initialize database
+            # Verify and initialize database
+            if not self.processor.database.verify_database_setup():
+                raise Exception("Database setup verification failed")
+            
             self.processor.database.init_database()
             
             # Start background tasks
@@ -106,7 +109,7 @@ class StabilizationManager:
             health_data = self.processor.database.get_user_health(user_id)
             if not health_data:
                 await interaction.response.send_message(
-                    "❌ No health data found! Character stats may need to be initialized first.", 
+                    "❌ No health data found! User stats may need to be initialized first.", 
                     ephemeral=True
                 )
                 return

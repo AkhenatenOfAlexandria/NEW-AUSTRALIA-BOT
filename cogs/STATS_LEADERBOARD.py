@@ -9,7 +9,7 @@ GUILD = discord.Object(id=GUILD_ID)
 
 
 class StatsLeaderboards(commands.Cog):
-    """Leaderboards and ranking system for character stats"""
+    """Leaderboards and ranking system for user stats"""
     
     def __init__(self, bot):
         self.bot = bot
@@ -114,7 +114,7 @@ class StatsLeaderboards(commands.Cog):
             
             user_stats = stats_core.get_user_stats(interaction.user.id)
             if not user_stats:
-                await interaction.followup.send("❌ You don't have character stats yet! An admin can assign them using `/assign_stats`.")
+                await interaction.followup.send("❌ You don't have stats yet! An admin can assign them using `/assign_stats`.")
                 return
             
             conn = sqlite3.connect('stats.db')

@@ -318,3 +318,31 @@ class StabilizationDatabase:
             failures=0,
             next_roll_time=None
         )
+    
+    def verify_database_setup(self):
+        """Verify that required tables exist and create them if needed"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Check if user_stats table exists
+                cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user_stats'")
+                if not cursor.fetchone():
+                    # Create a basic user_stats table if it doesn't exist
+                    cursor.execute('''
+                        CREATE TABLE user_stats (
+                            user_id INTEGER PRIMARY KEY,
+                            health INTEGER DEFAULT 10,
+                            max_health INTEGER DEFAULT 10,
+                            level INTEGER DEFAULT 1,
+                            constitution INTEGER DEFAULT 10,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        )
+                    ''')
+                    logging.warning("Created missing user_stats table with default schema")
+                
+                conn.commit()
+                return True
+        except Exception as e:
+            logging.error(f"Database verification failed: {e}")
+            return False

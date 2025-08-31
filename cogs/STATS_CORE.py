@@ -250,7 +250,7 @@ class StatsCore(commands.Cog):
         except Exception as e:
             logging.error(f"❌ Failed to assign stats to {member.display_name}: {e}")
     
-    @app_commands.command(name="stats", description="View your character stats")
+    @app_commands.command(name="stats", description="View your user stats")
     @app_commands.guilds(GUILD)
     async def view_stats(self, interaction: discord.Interaction, member: Optional[discord.Member] = None):
         """View stats for yourself or another member"""

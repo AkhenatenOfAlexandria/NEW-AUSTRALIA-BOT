@@ -286,22 +286,45 @@ class HospitalCore:
             conn = sqlite3.connect('stats.db')
             cursor = conn.cursor()
             
+            # Ensure parameters are the correct types
+            user_id = int(user_id)  # Convert to int in case it's a string
+            health_points = int(health_points)  # Ensure it's an integer
+            
             # Get current health
             cursor.execute('SELECT health FROM user_stats WHERE user_id = ?', (user_id,))
             result = cursor.fetchone()
             if not result:
                 conn.close()
+                logging.error(f"❌ User {user_id} not found in user_stats table")
                 return False
             
-            current_health = result[0]
+            current_health = int(result[0])  # Ensure current health is an integer
             new_health = current_health + health_points
             
+            # Update with properly typed parameters
             cursor.execute('UPDATE user_stats SET health = ? WHERE user_id = ?', (new_health, user_id))
+            
+            # Verify the update was successful
+            if cursor.rowcount == 0:
+                conn.close()
+                logging.error(f"❌ No rows updated when healing user {user_id}")
+                return False
+            
             conn.commit()
             conn.close()
+            
+            logging.info(f"✅ Healed user {user_id}: {current_health} → {new_health} HP (+{health_points})")
             return new_health
+            
+        except sqlite3.Error as e:
+            logging.error(f"❌ SQLite error when healing user {user_id}: {e}")
+            if 'conn' in locals():
+                conn.close()
+            return False
         except Exception as e:
-            logging.error(f"❌ Failed to heal user: {e}")
+            logging.error(f"❌ Failed to heal user {user_id}: {e}")
+            if 'conn' in locals():
+                conn.close()
             return False
 
     async def log_hospital_failures(self, failures_summary):

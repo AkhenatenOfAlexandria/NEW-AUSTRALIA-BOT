@@ -5,11 +5,16 @@ import logging
 from typing import Optional
 
 # Import configurations
+# Import configurations with better error handling
 try:
-    from UTILS.CONFIGURATION import GUILD_ID
-except ImportError:
-    # Fallback - replace with your actual guild ID
+    from UTILS.CONFIGURATION import GUILD_ID, HEALTH_LOG_ID
+    GUILD = discord.Object(id=GUILD_ID)
+except ImportError as e:
+    logging.error(f"Configuration import failed: {e}")
+    # Set fallback values - REPLACE THESE WITH YOUR ACTUAL IDs
     GUILD_ID = 123456789
+    GUILD = discord.Object(id=GUILD_ID)
+    logging.warning("Using fallback configuration - update with your actual values!")
 
 from .STABILIZATION.STABILIZATION_MANAGER import StabilizationManager
 
@@ -19,6 +24,7 @@ class StabilizationCog(commands.Cog):
     """Discord cog for stabilization system commands"""
     
     def __init__(self, bot):
+        logging.debug("Stabilization Cog Initializing...")
         self.bot = bot
         self.manager = StabilizationManager(bot)
         
@@ -52,13 +58,15 @@ class StabilizationCog(commands.Cog):
         user: Optional[discord.Member] = None
     ):
         """Check stabilization status"""
+        logging.debug("StabilizationCob stabilization_status activated...")
         await self.manager.show_stabilization_status(interaction, user)
+        logging.debug("StabilizationCob stabilization_status() completed.")
     
     # Debug Commands (remove these in production or restrict to admin)
     
     @app_commands.command(
         name="debug_start_stabilization", 
-        description="[DEBUG] Force start stabilization for testing"
+        description="[DEBUG] Force start stabilization() for testing"
     )
     @app_commands.guilds(GUILD)
     @app_commands.describe(user="User to start stabilization for (leave empty for yourself)")
@@ -68,8 +76,10 @@ class StabilizationCog(commands.Cog):
         user: Optional[discord.Member] = None
     ):
         """Debug command to start stabilization"""
+        logging.debug("StabilizationCob debug_start_stabilization() activated...")
         await self.manager.debug_start_stabilization(interaction, user)
-    
+        logging.debug("StabilizationCob debug_start_stabilization() activated...")
+
     @app_commands.command(
         name="debug_damage", 
         description="[DEBUG] Apply damage for testing"
@@ -86,6 +96,7 @@ class StabilizationCog(commands.Cog):
         user: Optional[discord.Member] = None
     ):
         """Debug command to apply damage"""
+        logging.debug("StabilizationCob debug_damage() activated...")
         if amount <= 0:
             await interaction.response.send_message(
                 "❌ Damage amount must be positive!", 
@@ -94,6 +105,7 @@ class StabilizationCog(commands.Cog):
             return
         
         await self.manager.debug_damage(interaction, amount, user)
+        logging.debug("StabilizationCob debug_damage() completed.")
     
     @app_commands.command(
         name="debug_system_health", 
@@ -104,8 +116,10 @@ class StabilizationCog(commands.Cog):
         self, 
         interaction: discord.Interaction
     ):
+        logging.debug("StabilizationCob debug_system_health() activated...")
         """Debug command to check system health"""
         await self.manager.debug_system_health(interaction)
+        logging.debug("StabilizationCob debug_system_health() completed.")
     
     @app_commands.command(
         name="debug_restart_stabilization", 

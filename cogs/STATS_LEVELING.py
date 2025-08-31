@@ -128,7 +128,7 @@ class StatsLeveling(commands.Cog):
             
             stats = stats_core.get_user_stats(interaction.user.id)
             if not stats:
-                await interaction.followup.send("❌ You don't have character stats yet! An admin can assign them using `/assign_stats`.")
+                await interaction.followup.send("❌ You don't have stats yet! An admin can assign them using `/assign_stats`.")
                 return
             
             current_level = stats.get('level', 1)
@@ -326,7 +326,7 @@ class StatsLeveling(commands.Cog):
             
             stats = stats_core.get_user_stats(member.id)
             if not stats:
-                await interaction.followup.send(f"❌ {member.display_name} doesn't have character stats yet!")
+                await interaction.followup.send(f"❌ {member.display_name} doesn't have stats yet!")
                 return
             
             if self.update_user_level(member.id, level):

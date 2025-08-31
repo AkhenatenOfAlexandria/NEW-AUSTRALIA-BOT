@@ -42,7 +42,7 @@ class HospitalHealing:
         stats = stats_core.get_user_stats(user_id)
         if not stats:
             await self.core.send_error_to_health_log(
-                f"Healing attempt failed for **{user.display_name}** - no character stats",
+                f"Healing attempt failed for **{user.display_name}** - no user stats",
                 "Patient has no character statistics in system"
             )
             return False

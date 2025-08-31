@@ -23,28 +23,39 @@ class HospitalFinancial:
             user_total = user_balance[2]
             user_credit = user_balance[3]
             
-            # Calculate available funds (cash + potential credit)
-            available_funds = user_cash
-            credit_limit = int(user_total * user_credit)
-            if credit_limit > user_cash:
-                available_funds = credit_limit
+            # Hospital services prioritize cash first, then credit if needed
+            # Even if total balance is negative, positive cash should be usable
+            available_funds = 0
+            
+            if user_cash > 0:
+                # User has positive cash - this is always available for hospital services
+                available_funds = user_cash
+            else:
+                # No cash available, check if credit system can cover it
+                credit_limit = int(user_total * user_credit)
+                if credit_limit > 0:
+                    available_funds = credit_limit
             
             # Calculate how many HP they can afford
             max_affordable_hp = available_funds // HEALING_COST_PER_HP
             
-            # Limit to what they actually need (but allow going above 1 HP if they can afford it)
-            health_needed = max_health - current_health
-            affordable_hp = min(max_affordable_hp, health_needed)
-            
-            # However, if they're at 0 or negative HP, prioritize getting to at least 1 HP
-            if current_health <= 0 and affordable_hp >= 1:
-                # They can afford at least stabilization
-                return max(1, affordable_hp), affordable_hp * HEALING_COST_PER_HP
-            elif current_health <= 0:
-                # They can't even afford stabilization
-                return 0, 0
+            # Calculate what they actually need
+            if current_health <= 0:
+                # They're unconscious - calculate HP needed to get to 1 HP minimum
+                hp_needed_for_stabilization = 1 - current_health  # e.g., -13 HP needs 14 HP to reach 1 HP
+                
+                # Return the minimum of what they can afford vs what they need for full healing
+                # But prioritize stabilization if they can't afford full healing
+                max_healing_needed = max_health - current_health
+                affordable_hp = min(max_affordable_hp, max_healing_needed)
+                
+                # Return the affordable amount and its cost
+                return affordable_hp, affordable_hp * HEALING_COST_PER_HP
+                
             else:
-                # They're above 0 HP, heal what they can afford
+                # They're conscious - heal up to max health if they can afford it
+                health_needed = max_health - current_health
+                affordable_hp = min(max_affordable_hp, health_needed)
                 return affordable_hp, affordable_hp * HEALING_COST_PER_HP
             
         except Exception as e:

@@ -231,7 +231,7 @@ class StabilizationLogger:
             else:
                 embed.add_field(
                     name="Status", 
-                    value="💀 **Dying**", 
+                    value="💀 **Unstable**", 
                     inline=True
                 )
         

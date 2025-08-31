@@ -156,7 +156,7 @@ class HospitalDischarge:
         
         stats = stats_core.get_user_stats(user_id)
         if not stats:
-            return False, "No character stats available"
+            return False, "No user stats available"
         
         current_health = stats['health']
         

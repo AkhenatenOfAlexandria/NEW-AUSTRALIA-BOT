@@ -1,6 +1,6 @@
 # HEALING_SERVICE.py - WITH DEBUG LOGGING
 import discord
-import sqlite3
+import random
 import logging
 from datetime import datetime
 
@@ -11,7 +11,7 @@ from .HEALING_LOGGER import HealingLogger
 from .HEALING_DATABASE import HealingDatabase
 from .HEALING_VALIDATORS import HealingValidators
 
-HEALING_COST_PER_HP = 1000
+HEALING_COST = 5000
 
 class HealingService:
     """Core healing business logic"""
@@ -26,6 +26,14 @@ class HealingService:
     async def process_healing_request(self, interaction, amount=None):
         """Main healing logic"""
         user_id = interaction.user.id
+
+        if amount is not None:
+            embed = discord.Embed(
+                title="ℹ️ Fixed Healing System",
+                description=f"This system now uses fixed healing costs. Each heal costs **{HEALING_COST:,}** shekels.",
+                color=discord.Color.blue()
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
         
         # Validation
         validation_result = await self._validate_healing_request(interaction)
@@ -39,7 +47,7 @@ class HealingService:
             return
         
         # Calculate healing needs
-        healing_data = await self._calculate_healing_needs(interaction, amount)
+        healing_data = await self._calculate_healing_needs(interaction)
         if not healing_data:
             return
         
@@ -64,8 +72,8 @@ class HealingService:
         user_id = interaction.user.id
         
         # Check if user is in combat
-        if self.validators.is_user_in_combat(user_id):
-            return {'valid': False, 'reason': "You cannot heal while in combat!"}
+        '''if self.validators.is_user_in_combat(user_id):
+            return {'valid': False, 'reason': "You cannot heal while in combat!"}'''
         
         # Validate user stats exist
         stats, error = self.validators.validate_user_stats(user_id)
@@ -95,7 +103,7 @@ class HealingService:
             )
         return 100  # Fallback
     
-    async def _calculate_healing_needs(self, interaction, amount):
+    async def _calculate_healing_needs(self, interaction):
         """Calculate what healing is needed and costs"""
         user_id = interaction.user.id
         
@@ -107,18 +115,18 @@ class HealingService:
         
         stats = stats_core.get_user_stats(user_id)
         if not stats:
-            await interaction.response.send_message("❌ No character stats found.", ephemeral=True)
+            await interaction.response.send_message("❌ No user stats found.", ephemeral=True)
             return None
         
         current_health = stats.get('health', 0)
         max_health = self._calculate_max_health(stats)
         
         # Calculate healing amount and cost
-        health_to_heal, total_cost = self.calculator.calculate_healing_cost(
-            current_health, max_health, amount
+        _h, total_cost = self.calculator.calculate_healing_cost(
+            current_health, max_health
         )
         
-        if health_to_heal <= 0:
+        if _h <= 0:
             embed = discord.Embed(
                 title="❌ No Healing Needed",
                 description="You don't need any healing!",
@@ -127,6 +135,9 @@ class HealingService:
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return None
         
+        health_to_heal = random.randint(1,4) + random.randint(1,4) + 2
+        health_to_heal = min(health_to_heal, max_health)
+
         return {
             'user_id': user_id,
             'current_health': current_health,
@@ -240,7 +251,7 @@ class HealingService:
         
         embed = discord.Embed(
             title="🏥 Infirmary Information",
-            description="Welcome to the infirmary! Here you can restore your health for shekels.",
+            description="Welcome to the ASTRIFER Co. Infirmary! Here you can restore your health for shekels.",
             color=discord.Color.blue()
         )
         
@@ -248,8 +259,7 @@ class HealingService:
             current_health = stats.get('health', 0)
             max_health = self._calculate_max_health(stats)
             health_needed = max_health - current_health
-            full_heal_cost = health_needed * HEALING_COST_PER_HP
-            
+
             embed.add_field(
                 name="Your Health", 
                 value=f"{current_health}/{max_health} HP", 
@@ -260,22 +270,17 @@ class HealingService:
                 value=f"{user_balance[0]:,} shekels", 
                 inline=True
             )
-            embed.add_field(
-                name="Full Heal Cost", 
-                value=f"{full_heal_cost:,} shekels" if health_needed > 0 else "N/A (Full Health)", 
-                inline=True
-            )
         
         embed.add_field(
-            name="Healing Rate", 
-            value=f"{HEALING_COST_PER_HP:,} shekels per HP", 
+            name="Healing System", 
+            value=f"**Cost:** {HEALING_COST:,} shekels per heal", 
             inline=False
         )
         embed.add_field(
             name="Commands", 
-            value="• `/heal` - Heal to full health\n• `/heal <amount>` - Heal specific amount\n• `/healing_cost` - Check healing costs", 
+            value=f"• `/heal` - Heal for {HEALING_COST} shekels\n `/healing_cost` - Check healing costs", 
             inline=False
         )
-        embed.set_footer(text="Note: You cannot heal while in combat or unconscious.")
+        embed.set_footer(text="Note: You cannot heal while unconscious.")
         
         await interaction.response.send_message(embed=embed)

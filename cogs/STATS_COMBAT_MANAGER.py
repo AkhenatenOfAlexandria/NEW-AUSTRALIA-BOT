@@ -70,7 +70,7 @@ class StatsCombatManager(commands.Cog):
             if attack_result['critical_hit']:
                 damage_text += " (critical damage!)"
             
-            health_status = "💀 **UNCONSCIOUS**" if new_health <= 0 else f"❤️ {new_health} HP"
+            health_status = f"❤️ {new_health} HP"
             embed.add_field(name="💥 Damage", value=damage_text, inline=True)
             embed.add_field(name="🩺 Health", value=health_status, inline=True)
         
@@ -78,8 +78,8 @@ class StatsCombatManager(commands.Cog):
         attacker_hp = attacker_stats.get('health', 0)
         defender_hp = new_health if attack_result['hit'] else defender_stats.get('health', 0)
         
-        attacker_status = "💀" if attacker_hp <= 0 else f"❤️{attacker_hp}"
-        defender_status = "💀" if defender_hp <= 0 else f"❤️{defender_hp}"
+        attacker_status = f"❤️{attacker_hp}"
+        defender_status = f"❤️{defender_hp}"
         
         embed.add_field(
             name="👥 Participants",

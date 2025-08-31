@@ -3,7 +3,7 @@ import logging
 from UTILS.CONFIGURATION import ANNOUNCEMENTS_ID, GENERAL_ID, MONEY_LOG_ID, intents, DEBUG_MODE
 
 class BotConfig:
-    VERSION = "v. Alpha 1.6.4"
+    VERSION = "v. Alpha 1.6.6"
     GUILD_ID = 574731470900559872
     GUILD = discord.Object(id=GUILD_ID)
     

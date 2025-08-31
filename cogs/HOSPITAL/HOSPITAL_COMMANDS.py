@@ -176,7 +176,7 @@ class HospitalCommands(commands.Cog):
                             current_health = stats['health']
                             
                             if current_health <= 0:
-                                health_info = f" - 💀 Unconscious ({current_health} HP)"
+                                health_info = f" - 💀 Unconscious ({current_health}/{max_health} HP)"
                             else:
                                 health_info = f" - ✅ Conscious ({current_health}/{max_health} HP)"
                     

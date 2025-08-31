@@ -4,21 +4,18 @@ import discord
 class HealingCalculator:
     """Handles all healing cost calculations"""
     
-    HEALING_COST_PER_HP = 1000
+    HEALING_COST = 5000
     
     def calculate_healing_cost(self, current_health, max_health, amount=None):
-        """Calculate cost for healing"""
-        if amount is None:
-            health_needed = max_health - current_health
-        else:
-            max_possible = max_health - current_health
-            health_needed = min(amount, max_possible)
+        max_possible_heal = max_health - current_health
         
-        # Ensure we don't heal negative amounts
-        health_needed = max(0, health_needed)
-        total_cost = health_needed * self.HEALING_COST_PER_HP
-        return health_needed, total_cost
-    
+        if max_possible_heal <= 0:
+            return 0,0
+        
+        total_cost = self.HEALING_COST if max_possible_heal > 0 else 0
+
+        return max_possible_heal, total_cost
+
     def can_afford_healing(self, user_cash, healing_cost):
         """Check if user can afford healing"""
         return user_cash >= healing_cost
@@ -35,14 +32,15 @@ class HealingCalculator:
         
         stats = stats_core.get_user_stats(user_id)
         if not stats:
-            await interaction.response.send_message("❌ No character stats found.", ephemeral=True)
+            await interaction.response.send_message("❌ No user stats found.", ephemeral=True)
             return
         
         current_health = stats.get('health', 0)
         max_health = self._calculate_max_health(stats, stats_core)
         
         # Calculate costs
-        health_needed, cost = self.calculate_healing_cost(current_health, max_health, amount)
+        health_to_heal, cost = self.calculate_healing_cost(current_health, max_health)
+        
         
         embed = discord.Embed(
             title="💰 Healing Cost Calculator",
@@ -55,21 +53,21 @@ class HealingCalculator:
             inline=True
         )
         
-        if amount:
-            embed.add_field(
-                name="Requested Healing", 
-                value=f"{amount} HP", 
-                inline=True
-            )
-        
         embed.add_field(
-            name="Health to Heal", 
-            value=f"{health_needed} HP", 
+            name="Health per Heal",
+            value=f"{self.HEALING_AMOUNT} HP",
             inline=True
         )
+        
         embed.add_field(
-            name="Total Cost", 
-            value=f"{cost:,} shekels", 
+            name="Will Heal", 
+            value=f"{health_to_heal} HP", 
+            inline=True
+        )
+
+        embed.add_field(
+            name="Cost per Heal", 
+            value=f"{self.HEALING_COST} shekels", 
             inline=True
         )
         embed.add_field(
@@ -78,7 +76,7 @@ class HealingCalculator:
             inline=True
         )
         
-        if health_needed == 0:
+        if health_to_heal == 0:
             embed.add_field(
                 name="Status", 
                 value="❌ No healing needed!", 
@@ -91,7 +89,9 @@ class HealingCalculator:
             status = "✅ You can afford this!" if can_afford else "❌ Insufficient funds!"
             embed.add_field(name="Affordability", value=status, inline=False)
         
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+            # Show how many heals needed for full health
+
+        await interaction.response.send_message(embed=embed, ephemeral=False)
     
     def _calculate_max_health(self, stats, stats_core):
         """Calculate max health from stats"""

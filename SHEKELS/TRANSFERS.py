@@ -169,6 +169,7 @@ def UPDATE_BALANCE(USER, AMOUNT, TYPE):
         else:
             raise Exception("NO DATA TO DUMP")
     logging.debug("UPDATE_BALANCE completed.")
+    return _BALANCE
 
 
 def WITHDRAW(USER, AMOUNT, TIME):

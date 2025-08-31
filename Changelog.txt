@@ -1,3 +1,15 @@
+Alpha 1.6.6:
+- Stabilization is still the Devil.
+
+Alpha 1.6.5:
+- Split Daily Topic cog into multiple files.
+- Fixed Music commands.
+- Patched Healing.
+- Added Debug logging to Combat commands.
+- Patched unstable user logging.
+- Patched Hospital.
+- Added Looting, which had inexplicably disappeared.
+
 Alpha 1.6.4:
 - Patched Stabilization.
 - Combat delay-based instead of turn-based.

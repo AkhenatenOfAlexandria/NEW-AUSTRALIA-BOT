@@ -5,7 +5,7 @@ class HealingValidators:
     def __init__(self, bot):
         self.bot = bot
     
-    def is_user_in_combat(self, user_id):
+    '''def is_user_in_combat(self, user_id):
         """Check if user is in combat"""
         # Check if combat reactions system exists
         combat_reactions = self.bot.get_cog('StatsCombatReactions')
@@ -22,7 +22,7 @@ class HealingValidators:
         if combat_cog and hasattr(combat_cog, 'is_user_in_combat'):
             return combat_cog.is_user_in_combat(user_id)
         
-        return False
+        return False'''
     
     def validate_user_stats(self, user_id):
         """Validate user has stats and get them"""
@@ -35,22 +35,11 @@ class HealingValidators:
         
         stats = stats_core.get_user_stats(user_id)
         if not stats:
-            return None, "No character stats found. Ask an admin to assign stats!"
+            return None, "No user stats found. Ask an admin to assign stats!"
         
         return stats, None
     
     def validate_healing_amount(self, amount, current_health, max_health):
         """Validate healing amount is reasonable"""
-        if amount is None:
-            return True, None
-        
-        if amount <= 0:
-            return False, "Healing amount must be positive!"
-        
-        if amount > (max_health - current_health):
-            return False, f"You can only heal {max_health - current_health} HP maximum!"
-        
-        if amount > 1000:  # Arbitrary large amount check
-            return False, "Healing amount seems unreasonably large!"
         
         return True, None
